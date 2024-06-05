@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Dice : MonoBehaviour {
-
   [SerializeField] Sprite[] diceSides = new Sprite[6];
   [SerializeField] Image image;
   [SerializeField] Animator animator;
@@ -17,7 +16,7 @@ public class Dice : MonoBehaviour {
     if (isRolling){
       return;
     }
-    StartCoroutine("RollTheDice");
+    StartCoroutine(RollTheDice());
   }
   private IEnumerator RollTheDice(){
     isRolling = true;
