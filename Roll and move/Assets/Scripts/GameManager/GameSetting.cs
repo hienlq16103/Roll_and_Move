@@ -5,8 +5,8 @@ using UnityEngine;
 public class GameSetting : MonoBehaviour {
   public static GameSetting Instance;
 
-  public int playerCount;
-  public string[] playerNames;
+  public int playerCount = 4;
+  public string[] playerNames = {"Player 1", "Player 2", "Player 3", "Player 4"};
 
   private void Awake() {
     if (Instance != null){

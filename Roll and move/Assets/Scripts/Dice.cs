@@ -12,6 +12,10 @@ public class Dice : MonoBehaviour {
   private int finalSide = 0;
   private bool isRolling = false;
 
+  public int DiceValue(){
+    return finalSide;
+  }
+
   public void ClickTheDice(){
     if (isRolling){
       return;

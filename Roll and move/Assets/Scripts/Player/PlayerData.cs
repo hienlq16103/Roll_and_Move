@@ -9,6 +9,18 @@ public class PlayerData : MonoBehaviour {
   private int turnRemained = 1;
   private int bonusSectorCount = 0;
   private int failSectorCount = 0;
+  private int currentSector = 0;
+  private int index = 0;
+
+  public void Print(){
+    Debug.Log("Player index: " + index + "\n"
+    + "Player name: " + playerName + "\n"
+    + "Current sector: " + currentSector + "\n"
+    + "Turn count: " + turnCount + "\n"
+    + "Turn remained: " + turnRemained + "\n"
+    + "Bonus: " + bonusSectorCount + "\n"
+    + "Fail: " + failSectorCount);
+  }
 
   public string PlayerName(){
     return playerName;
@@ -24,6 +36,12 @@ public class PlayerData : MonoBehaviour {
   }
   public int FailSectorCount(){
     return failSectorCount;
+  }
+  public int CurrentSector(){
+    return currentSector;
+  }
+  public int Index(){
+    return index;
   }
 
   public void SetPlayerName(string customName){
@@ -46,5 +64,14 @@ public class PlayerData : MonoBehaviour {
   }
   public void IncreaseFailSectorCount(){
     failSectorCount++;
+  }
+  public void IncreaseCurrentSector(){
+    currentSector++;
+  }
+  public void ChangeCurrentSectorBy(int value){
+    currentSector += value;
+  }
+  public void SetIndex(int index){
+    this.index = index;
   }
 }

@@ -13,14 +13,11 @@ public class GameController : MonoBehaviour {
     }
   }
 
-  [SerializeField] GameObject player;
+  [SerializeField] GameObject[] playerPrefabs = new GameObject[4];
+  [SerializeField] Sector[] sectorList;
 
-  private LinkedList<PlayerReference> turnList;
-  private LinkedList<PlayerData> finishedList;
-
-  private GameObject playerClone;
-  private PlayerData cloneData;
-  private PlayerControl cloneControl;
+  private LinkedList<PlayerReference> turnList = new LinkedList<PlayerReference>();
+  private LinkedList<PlayerData> finishedList = new LinkedList<PlayerData>();
 
   private void Start() {
     SetUpGame();
@@ -31,10 +28,13 @@ public class GameController : MonoBehaviour {
       return;
     }
     for (int i = 0; i < GameSetting.Instance.playerCount; i++) {
-      playerClone = Instantiate(player);
-      cloneData = playerClone.GetComponent<PlayerData>();
-      cloneControl = playerClone.GetComponent<PlayerControl>();
+      GameObject playerClone = Instantiate(playerPrefabs[i],
+          sectorList[0].standPoints[i].position,
+          sectorList[0].standPoints[i].rotation);
+      PlayerData cloneData = playerClone.GetComponent<PlayerData>();
+      PlayerControl cloneControl = playerClone.GetComponent<PlayerControl>();
       cloneData.SetPlayerName(GameSetting.Instance.playerNames[i]);
+      cloneData.SetIndex(i);
       turnList.AddLast(new PlayerReference(cloneData, cloneControl));
     }
   }
