@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Dice : MonoBehaviour {
+
+  [HideInInspector] public bool IsRolledThisTurn = false;
+
   [SerializeField] Sprite[] diceSides = new Sprite[6];
   [SerializeField] Image image;
   [SerializeField] Animator animator;
@@ -20,6 +23,9 @@ public class Dice : MonoBehaviour {
     if (isRolling){
       return;
     }
+    if (IsRolledThisTurn){
+      return;
+    }
     StartCoroutine(RollTheDice());
   }
   private IEnumerator RollTheDice(){
@@ -34,5 +40,6 @@ public class Dice : MonoBehaviour {
     Debug.Log("Dice value: " + finalSide);
     isRolling = false;
     animator.SetBool("isRolling", isRolling);
+    IsRolledThisTurn = true;
   }
 }

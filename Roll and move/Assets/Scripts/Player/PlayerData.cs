@@ -59,6 +59,9 @@ public class PlayerData : MonoBehaviour {
   public void DecreaseTurnRemained(){
     turnRemained--;
   }
+  public void ChangeTurnRemainedBy(int value){
+    turnRemained += value;
+  }
   public void IncreaseBonusSectorCount(){
     bonusSectorCount++;
   }
