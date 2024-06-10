@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class GameController : MonoBehaviour {
   class PlayerReference{
@@ -19,13 +20,16 @@ public class GameController : MonoBehaviour {
   [SerializeField] float movementDelay = 0.1f;
 
   [SerializeField] Dice dice;
+  [SerializeField] CinemachineVirtualCamera cameraPrefab;
   [SerializeField] GameObject[] playerPrefabs = new GameObject[4];
   [SerializeField] Sector[] sectorList;
 
   private LinkedList<PlayerReference> turnList = new LinkedList<PlayerReference>();
   private LinkedList<PlayerReference> finishedList = new LinkedList<PlayerReference>();
+  private LinkedList<CinemachineVirtualCamera> cameraList = new LinkedList<CinemachineVirtualCamera>();
 
   private LinkedListNode<PlayerReference> turnVisitor;
+  private LinkedListNode<CinemachineVirtualCamera> activeCamera;
   private bool removingNode = false;
 
   private void Start() {
@@ -46,10 +50,20 @@ public class GameController : MonoBehaviour {
       cloneData.SetPlayerName(GameSetting.Instance.playerNames[i]);
       cloneData.SetIndex(i);
       turnList.AddLast(new PlayerReference(cloneData, cloneControl));
+
+      CinemachineVirtualCamera camera = Instantiate(cameraPrefab,
+          Vector3.zero,
+          Quaternion.identity);
+      camera.LookAt = playerClone.transform;
+      camera.Follow = playerClone.transform;
+      camera.enabled = false;
+      cameraList.AddLast(camera);
     }
   }
   private IEnumerator GamePlayLoop(){
     turnVisitor = turnList.First;
+    activeCamera = cameraList.First;
+    activeCamera.Value.enabled = true;
 
     while(turnList.Count > 0){
       turnVisitor.Value.data.SetTurnRemained(1);
@@ -63,30 +77,48 @@ public class GameController : MonoBehaviour {
 
         yield return StartCoroutine(MoveForward(turnVisitor, dice.DiceValue()));
 
-        dice.IsRolledThisTurn = false;
+        if (turnVisitor.Value.data.TurnRemained() > 0){
+          dice.IsRolledThisTurn = false;
+        }
       }
+
 
       if (removingNode){
         if (turnList.Count == 1){
           turnList.Remove(turnVisitor);
         } else {
+          activeCamera.Value.enabled = false;
           LinkedListNode<PlayerReference> targetNode = turnVisitor;
+          LinkedListNode<CinemachineVirtualCamera> removingCamera = activeCamera;
           if (turnVisitor.Next == null){
             turnVisitor = turnList.First;
+            activeCamera = cameraList.First;
           } else {
             turnVisitor = turnVisitor.Next;
+            activeCamera = activeCamera.Next;
           }
           turnList.Remove(targetNode);
+          cameraList.Remove(removingCamera);
+          activeCamera.Value.enabled = true;
+          yield return new WaitForSeconds(delayTime);
+          dice.IsRolledThisTurn = false;
         }
         removingNode = false;
       } else {
         if (turnList.Count <= 1){
-          continue;
-        }
-        if (turnVisitor.Next == null){
-          turnVisitor = turnList.First;
+          dice.IsRolledThisTurn = false;
         } else {
-          turnVisitor = turnVisitor.Next;
+          activeCamera.Value.enabled = false;
+          if (turnVisitor.Next == null){
+            turnVisitor = turnList.First;
+            activeCamera = cameraList.First;
+          } else {
+            turnVisitor = turnVisitor.Next;
+            activeCamera = activeCamera.Next;
+          }
+          activeCamera.Value.enabled = true;
+          yield return new WaitForSeconds(delayTime);
+          dice.IsRolledThisTurn = false;
         }
       }
     }

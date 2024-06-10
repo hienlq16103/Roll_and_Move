@@ -37,7 +37,6 @@ public class Dice : MonoBehaviour {
       yield return new WaitForSeconds(0.05f);
     }
     finalSide = randomSide + 1;
-    Debug.Log("Dice value: " + finalSide);
     isRolling = false;
     animator.SetBool("isRolling", isRolling);
     IsRolledThisTurn = true;

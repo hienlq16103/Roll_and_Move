@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerData : MonoBehaviour {
-  
+
   private string playerName = "Player 0";
   private int turnCount = 0;
   private int turnRemained = 1;
