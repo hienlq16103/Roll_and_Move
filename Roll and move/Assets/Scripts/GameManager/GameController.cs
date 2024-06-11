@@ -23,6 +23,9 @@ public class GameController : MonoBehaviour {
   [SerializeField] CinemachineVirtualCamera cameraPrefab;
   [SerializeField] GameObject[] playerPrefabs = new GameObject[4];
   [SerializeField] Sector[] sectorList;
+  [SerializeField] Color[] playerColor = new Color[4];
+  [SerializeField] GameObject bonusFloatingText;
+  [SerializeField] GameObject penaltyFloatingText;
 
   private LinkedList<PlayerReference> turnList = new LinkedList<PlayerReference>();
   private LinkedList<PlayerReference> finishedList = new LinkedList<PlayerReference>();
@@ -31,9 +34,13 @@ public class GameController : MonoBehaviour {
   private LinkedListNode<PlayerReference> turnVisitor;
   private LinkedListNode<CinemachineVirtualCamera> activeCamera;
   private bool removingNode = false;
+  private GameObject penaltyClone;
+
+  private void Awake() {
+    SetUpGame();
+  }
 
   private void Start() {
-    SetUpGame();
     StartCoroutine(GamePlayLoop());
   }
 
@@ -49,6 +56,8 @@ public class GameController : MonoBehaviour {
       PlayerControl cloneControl = playerClone.GetComponent<PlayerControl>();
       cloneData.SetPlayerName(GameSetting.Instance.playerNames[i]);
       cloneData.SetIndex(i);
+      cloneControl.SetText(cloneData.PlayerName(), playerColor[i]);
+      cloneControl.DisableCanva();
       turnList.AddLast(new PlayerReference(cloneData, cloneControl));
 
       CinemachineVirtualCamera camera = Instantiate(cameraPrefab,
@@ -64,6 +73,8 @@ public class GameController : MonoBehaviour {
     turnVisitor = turnList.First;
     activeCamera = cameraList.First;
     activeCamera.Value.enabled = true;
+    turnVisitor.Value.control.EnableCanva();
+
 
     while(turnList.Count > 0){
       turnVisitor.Value.data.SetTurnRemained(1);
@@ -85,9 +96,11 @@ public class GameController : MonoBehaviour {
 
       if (removingNode){
         if (turnList.Count == 1){
+          turnVisitor.Value.control.DisableCanva();
           turnList.Remove(turnVisitor);
         } else {
           activeCamera.Value.enabled = false;
+          turnVisitor.Value.control.DisableCanva();
           LinkedListNode<PlayerReference> targetNode = turnVisitor;
           LinkedListNode<CinemachineVirtualCamera> removingCamera = activeCamera;
           if (turnVisitor.Next == null){
@@ -101,6 +114,7 @@ public class GameController : MonoBehaviour {
           cameraList.Remove(removingCamera);
           activeCamera.Value.enabled = true;
           yield return new WaitForSeconds(delayTime);
+          turnVisitor.Value.control.EnableCanva();
           dice.IsRolledThisTurn = false;
         }
         removingNode = false;
@@ -109,6 +123,7 @@ public class GameController : MonoBehaviour {
           dice.IsRolledThisTurn = false;
         } else {
           activeCamera.Value.enabled = false;
+          turnVisitor.Value.control.DisableCanva();
           if (turnVisitor.Next == null){
             turnVisitor = turnList.First;
             activeCamera = cameraList.First;
@@ -118,6 +133,7 @@ public class GameController : MonoBehaviour {
           }
           activeCamera.Value.enabled = true;
           yield return new WaitForSeconds(delayTime);
+          turnVisitor.Value.control.EnableCanva();
           dice.IsRolledThisTurn = false;
         }
       }
@@ -140,9 +156,12 @@ public class GameController : MonoBehaviour {
       case SectorType.bonus:
         node.Value.data.IncreaseBonusSectorCount();
         node.Value.data.ChangeTurnRemainedBy(bonus);
+        Instantiate(bonusFloatingText, node.Value.data.transform);
         break;
       case SectorType.fail:
         node.Value.data.IncreaseFailSectorCount();
+        penaltyClone = Instantiate(penaltyFloatingText, node.Value.data.transform);
+        penaltyClone.GetComponent<FloatingText>().textObject.text += backwardStep.ToString();
         yield return StartCoroutine(MoveBackward(node, backwardStep));
         break;
       case SectorType.finish:
@@ -168,9 +187,12 @@ public class GameController : MonoBehaviour {
       case SectorType.bonus:
         node.Value.data.IncreaseBonusSectorCount();
         node.Value.data.ChangeTurnRemainedBy(bonus);
+        Instantiate(bonusFloatingText, node.Value.data.transform);
         break;
       case SectorType.fail:
         node.Value.data.IncreaseFailSectorCount();
+        penaltyClone = Instantiate(penaltyFloatingText, node.Value.data.transform);
+        penaltyClone.GetComponent<FloatingText>().textObject.text += backwardStep.ToString();
         yield return StartCoroutine(MoveBackward(node, backwardStep));
         break;
       case SectorType.normal:
