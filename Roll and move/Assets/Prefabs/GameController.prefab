@@ -95,3 +95,10 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  playerColor:
+  - {r: 0.15686275, g: 0.34117648, b: 0.8980392, a: 1}
+  - {r: 0.6431373, g: 0.2901961, b: 0, a: 1}
+  - {r: 0.94509804, g: 0.7882353, b: 0.101960786, a: 1}
+  - {r: 0.7764706, g: 0.20392157, b: 0.9137255, a: 1}
+  bonusFloatingText: {fileID: 2126964215490867704, guid: 746be484b3c7e334caf39fadefe57f96, type: 3}
+  penaltyFloatingText: {fileID: 4424882524935586485, guid: 64baf86c5c201044e8a18bcdb819a389, type: 3}

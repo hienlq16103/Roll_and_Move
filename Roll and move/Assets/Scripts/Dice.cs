@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Dice : MonoBehaviour {
-
+  
   [HideInInspector] public bool IsRolledThisTurn = false;
 
   [SerializeField] Sprite[] diceSides = new Sprite[6];

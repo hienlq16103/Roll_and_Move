@@ -14,11 +14,13 @@ public class GameController : MonoBehaviour {
     }
   }
   
+  [Header("PARAMETERS")]
   [SerializeField] int backwardStep = 3;
   [SerializeField] int bonus = 1;
   [SerializeField] float delayTime = 0.5f;
   [SerializeField] float movementDelay = 0.1f;
 
+  [Header("CACHE")]
   [SerializeField] Dice dice;
   [SerializeField] CinemachineVirtualCamera cameraPrefab;
   [SerializeField] GameObject[] playerPrefabs = new GameObject[4];
@@ -26,15 +28,20 @@ public class GameController : MonoBehaviour {
   [SerializeField] Color[] playerColor = new Color[4];
   [SerializeField] GameObject bonusFloatingText;
   [SerializeField] GameObject penaltyFloatingText;
+  [SerializeField] GameObject finishFloatingText;
+  [SerializeField] GameObject scoreBoard;
+  [SerializeField] GameObject entryList;
+  [SerializeField] ScoreEntry entryPrefab;
 
   private LinkedList<PlayerReference> turnList = new LinkedList<PlayerReference>();
   private LinkedList<PlayerReference> finishedList = new LinkedList<PlayerReference>();
   private LinkedList<CinemachineVirtualCamera> cameraList = new LinkedList<CinemachineVirtualCamera>();
-
   private LinkedListNode<PlayerReference> turnVisitor;
   private LinkedListNode<CinemachineVirtualCamera> activeCamera;
   private bool removingNode = false;
   private GameObject penaltyClone;
+  private ScoreEntry entryClone;
+  private int place = 1;
 
   private void Awake() {
     SetUpGame();
@@ -139,7 +146,7 @@ public class GameController : MonoBehaviour {
       }
     }
 
-    PrintResult(finishedList.First);
+    DisplayResult();
   }
   private IEnumerator MoveForward(LinkedListNode<PlayerReference> node, int step){
     for (int i = 0; i < step; i++){
@@ -167,6 +174,8 @@ public class GameController : MonoBehaviour {
       case SectorType.finish:
         finishedList.AddLast(node.Value);
         removingNode = true;
+        Instantiate(finishFloatingText, sectorList[sectorList.Length - 1].transform);
+        yield return new WaitForSeconds(delayTime * 2.0f);
         break;
       case SectorType.normal:
         break;
@@ -199,11 +208,21 @@ public class GameController : MonoBehaviour {
         break;
     }
   }
+  private void DisplayResult(){
+    scoreBoard.SetActive(true);
+    PrintResult(finishedList.First);
+  }
   private void PrintResult(LinkedListNode<PlayerReference> node){
     if (node == null){
       return;
     }
     node.Value.data.Print();
+    entryClone = Instantiate(entryPrefab, entryList.transform);
+    entryClone.SetPlace(place++);
+    entryClone.SetPlayerName(node.Value.data.PlayerName());
+    entryClone.SetTurnCount(node.Value.data.TurnCount());
+    entryClone.SetBonusCount(node.Value.data.BonusSectorCount());
+    entryClone.SetFailCount(node.Value.data.FailSectorCount());
     PrintResult(node.Next);
   }
 }
