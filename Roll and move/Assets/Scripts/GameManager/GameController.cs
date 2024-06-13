@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.Audio;
 
 public class GameController : MonoBehaviour {
   class PlayerReference{
@@ -31,7 +32,14 @@ public class GameController : MonoBehaviour {
   [SerializeField] GameObject finishFloatingText;
   [SerializeField] GameObject scoreBoard;
   [SerializeField] GameObject entryList;
+  [SerializeField] GameObject diceButton;
   [SerializeField] ScoreEntry entryPrefab;
+  [SerializeField] AudioSource source;
+  [SerializeField] AudioClip moveClip;
+  [SerializeField] AudioClip bonusClip;
+  [SerializeField] AudioClip failClip;
+  [SerializeField] AudioClip finishClip;
+  [SerializeField] AudioClip gameOverClip;
 
   private LinkedList<PlayerReference> turnList = new LinkedList<PlayerReference>();
   private LinkedList<PlayerReference> finishedList = new LinkedList<PlayerReference>();
@@ -157,6 +165,7 @@ public class GameController : MonoBehaviour {
       yield return StartCoroutine(node.Value.control.Move(
             sectorList[node.Value.data.CurrentSector()].standPoints[node.Value.data.Index()]
             ));
+      source.PlayOneShot(moveClip);
       yield return new WaitForSeconds(movementDelay);
     }
     switch (sectorList[node.Value.data.CurrentSector()].sectorType){
@@ -164,9 +173,11 @@ public class GameController : MonoBehaviour {
         node.Value.data.IncreaseBonusSectorCount();
         node.Value.data.ChangeTurnRemainedBy(bonus);
         Instantiate(bonusFloatingText, node.Value.data.transform);
+        source.PlayOneShot(bonusClip);
         break;
       case SectorType.fail:
         node.Value.data.IncreaseFailSectorCount();
+        source.PlayOneShot(failClip);
         penaltyClone = Instantiate(penaltyFloatingText, node.Value.data.transform);
         penaltyClone.GetComponent<FloatingText>().textObject.text += backwardStep.ToString();
         yield return StartCoroutine(MoveBackward(node, backwardStep));
@@ -174,6 +185,7 @@ public class GameController : MonoBehaviour {
       case SectorType.finish:
         finishedList.AddLast(node.Value);
         removingNode = true;
+        source.PlayOneShot(finishClip);
         Instantiate(finishFloatingText, sectorList[sectorList.Length - 1].transform);
         yield return new WaitForSeconds(delayTime * 2.0f);
         break;
@@ -190,16 +202,19 @@ public class GameController : MonoBehaviour {
       yield return StartCoroutine(node.Value.control.Move(
             sectorList[node.Value.data.CurrentSector()].standPoints[node.Value.data.Index()]
             ));
+      source.PlayOneShot(moveClip);
       yield return new WaitForSeconds(movementDelay);
     }
     switch (sectorList[node.Value.data.CurrentSector()].sectorType){
       case SectorType.bonus:
         node.Value.data.IncreaseBonusSectorCount();
         node.Value.data.ChangeTurnRemainedBy(bonus);
+        source.PlayOneShot(bonusClip);
         Instantiate(bonusFloatingText, node.Value.data.transform);
         break;
       case SectorType.fail:
         node.Value.data.IncreaseFailSectorCount();
+        source.PlayOneShot(failClip);
         penaltyClone = Instantiate(penaltyFloatingText, node.Value.data.transform);
         penaltyClone.GetComponent<FloatingText>().textObject.text += backwardStep.ToString();
         yield return StartCoroutine(MoveBackward(node, backwardStep));
@@ -209,7 +224,9 @@ public class GameController : MonoBehaviour {
     }
   }
   private void DisplayResult(){
+    diceButton.SetActive(false);
     scoreBoard.SetActive(true);
+    source.PlayOneShot(gameOverClip);
     PrintResult(finishedList.First);
   }
   private void PrintResult(LinkedListNode<PlayerReference> node){

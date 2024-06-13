@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
 
 public class ScoreBoardButton : MonoBehaviour {
+  [SerializeField] AudioSource audioSource;
+  [SerializeField] AudioClip buttonEnterClip;
+  [SerializeField] AudioClip buttonClickClip;
   public void GoToMenu(){
     StartCoroutine(LoadScene());
   }
@@ -16,6 +20,7 @@ public class ScoreBoardButton : MonoBehaviour {
   }
 
   public void ReloadScene(){
+    audioSource.PlayOneShot(buttonClickClip);
     StartCoroutine(ReloadAsync());
   }
   private IEnumerator ReloadAsync(){
@@ -24,5 +29,9 @@ public class ScoreBoardButton : MonoBehaviour {
     while(!asyncLoad.isDone){
       yield return null;
     }
+  }
+
+  public void EnterButton(){
+    audioSource.PlayOneShot(buttonEnterClip);
   }
 }

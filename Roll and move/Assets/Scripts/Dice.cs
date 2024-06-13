@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public class Dice : MonoBehaviour {
   
@@ -10,6 +11,8 @@ public class Dice : MonoBehaviour {
   [SerializeField] Sprite[] diceSides = new Sprite[6];
   [SerializeField] Image image;
   [SerializeField] Animator animator;
+  [SerializeField] AudioSource source;
+  [SerializeField] AudioClip diceRoll;
 
   private int randomSide = 0;
   private int finalSide = 0;
@@ -26,6 +29,7 @@ public class Dice : MonoBehaviour {
     if (IsRolledThisTurn){
       return;
     }
+    source.PlayOneShot(diceRoll);
     StartCoroutine(RollTheDice());
   }
   private IEnumerator RollTheDice(){
