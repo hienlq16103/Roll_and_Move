@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8821287487762670255}
   - component: {fileID: 8741905306596164867}
+  - component: {fileID: 7946490570837983975}
+  - component: {fileID: 3745045024202419935}
   m_Layer: 5
   m_Name: ExtraEntry
   m_TagString: Untagged
@@ -66,6 +68,32 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &7946490570837983975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192337999683266871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e54aa697a4dffe4a9b1249dcb406f56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extraEntry: {fileID: 3745045024202419935}
+--- !u!114 &3745045024202419935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192337999683266871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75b3945db22d2154984e18230664df36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  entryIndex: 0
 --- !u!1 &871246662118704960
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,7 +264,7 @@ GameObject:
   - component: {fileID: 7577570989928694026}
   m_Layer: 5
   m_Name: Name input
-  m_TagString: Untagged
+  m_TagString: input
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -358,10 +386,22 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 50
-  m_CharacterLimit: 0
+  m_CharacterLimit: 20
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3745045024202419935}
+        m_TargetAssemblyTypeName: ExtraEntry, Assembly-CSharp
+        m_MethodName: ChangePlayerName
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
@@ -707,7 +747,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4519650447085172214}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7946490570837983975}
+        m_TargetAssemblyTypeName: RemovePlayer, Assembly-CSharp
+        m_MethodName: Remove
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7204317432395850948
 GameObject:
   m_ObjectHideFlags: 0

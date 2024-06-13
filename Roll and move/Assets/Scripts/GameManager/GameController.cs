@@ -56,7 +56,9 @@ public class GameController : MonoBehaviour {
   }
 
   private void Start() {
-    StartCoroutine(GamePlayLoop());
+    if (GameSetting.Instance != null){
+      StartCoroutine(GamePlayLoop());
+    }
   }
 
   private void SetUpGame(){

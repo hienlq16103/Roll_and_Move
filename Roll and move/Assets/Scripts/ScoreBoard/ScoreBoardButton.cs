@@ -8,8 +8,13 @@ public class ScoreBoardButton : MonoBehaviour {
   [SerializeField] AudioSource audioSource;
   [SerializeField] AudioClip buttonEnterClip;
   [SerializeField] AudioClip buttonClickClip;
+
   public void GoToMenu(){
-    StartCoroutine(LoadScene());
+    if (GameSetting.Instance != null){
+      audioSource.PlayOneShot(buttonClickClip);
+    }
+      GameSetting.Instance.ResetSetting();
+      StartCoroutine(LoadScene());
   }
 
   private IEnumerator LoadScene(){
